@@ -51,7 +51,7 @@ def adicionar_ruido(imagem, nova_imagem_path, proporcao_ruido):
     print(f"Imagem com ruído salva como {nova_imagem_path}")
     return imagem_ruidosa
 
-def reduzir_quantizacao(imagem, num_cores):
+def reduzir_quantizacao(imagem, nova_imagem_path, num_cores):
     # Reduz a quantização da imagem para o número de cores especificado usando K-means.
     dados = imagem.reshape((-1, 3))
     dados = np.float32(dados)
@@ -60,6 +60,8 @@ def reduzir_quantizacao(imagem, num_cores):
     centros = np.uint8(centros)
     imagem_quantizada = centros[rotulos.flatten()]
     imagem_quantizada = imagem_quantizada.reshape(imagem.shape)
+    cv2.imwrite(nova_imagem_path, imagem_quantizada)
+    print(f"Imagem quantizada salva como {nova_imagem_path}")
     return imagem_quantizada, rotulos.reshape(imagem.shape[:2]), centros
     
 def obter_vizinhos(imagem, x, y, tamanho=3):
@@ -398,6 +400,7 @@ def visualizar_histogramas_bic(hist_borda, hist_interior, num_cores):
 caminho_imagem = "imagem_original.jpg" 
 caminho_imagem_grayscale = "imagem_original_grayscale.jpg"  
 caminho_imagem_ruidosa = "imagem_original_ruidosa.jpg"
+caminho_imagem_quantizada = "imagem_original_quantizada.jpg"
 caminho_imagem_brilho = "imagem_brilho.jpg" 
 caminho_imagem_negativa = "imagem_negativa.jpg" 
 caminho_histograma = "histograma_global.txt"  
@@ -434,7 +437,7 @@ k = 5 # Variável que especifica a quantidade de pixels a ser comparada na funç
 imagem = load_imagem(caminho_imagem)
 imagem_grayscale = load_imagem_grayscale(caminho_imagem, caminho_imagem_grayscale)
 imagem_ruidosa = adicionar_ruido(imagem_grayscale, caminho_imagem_ruidosa, proporcao_ruido)
-imagem_quantizada, rotulos, centros = reduzir_quantizacao(imagem, num_cores)
+imagem_quantizada, rotulos, centros = reduzir_quantizacao(imagem, caminho_imagem_quantizada, num_cores)
 
 # Funções alvo
 
